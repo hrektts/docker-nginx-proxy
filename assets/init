@@ -1,0 +1,135 @@
+#!/bin/bash
+set -e
+
+NGINX_HOME="/home/nginx"
+NGINX_DATA_DIR="${NGINX_HOME}/data"
+
+NGINX_HTTPS=${NGINX_HTTPS:-false}
+GITLAB_PASS=${GITLAB_PASS:-}
+GITLAB_RELATIVE_URL_ROOT=${GITLAB_ENV_GITLAB_RELATIVE_URL_ROOT:-"/"}
+REDMINE_PASS=${REDMINE_PASS:-}
+REDMINE_RELATIVE_URL_ROOT=${REDMINE_ENV_REDMINE_RELATIVE_URL_ROOT:-"/"}
+
+GITLAB_TCP_ADDR=${GITLAB_PORT_80_TCP_ADDR:-}
+GITLAB_TCP_PORT=${GITLAB_PORT_80_TCP_PORT:-}
+
+REDMINE_TCP_ADDR=${REDMINE_PORT_80_TCP_ADDR:-}
+REDMINE_TCP_PORT=${REDMINE_PORT_80_TCP_PORT:-}
+
+# is a gitlab container linked?
+if [ -n "${GITLAB_TCP_ADDR}" ]; then
+    GITLAB_PASS="http://${GITLAB_TCP_ADDR}${GITLAB_TCP_PORT:+:$GITLAB_TCP_PORT}"
+fi
+
+# is a redmine container linked?
+if [ -n "${REDMINE_TCP_ADDR}" ]; then
+    REDMINE_PASS="http://${REDMINE_TCP_ADDR}${REDMINE_TCP_PORT:+:$REDMINE_TCP_PORT}"
+fi
+
+SSL_SELF_SIGNED=${SSL_SELF_SIGNED:-false}
+SSL_CERTIFICATE_PATH=${SSL_CERTIFICATE_PATH:-$NGINX_DATA_DIR/certs/nginx.crt}
+SSL_KEY_PATH=${SSL_KEY_PATH:-$NGINX_DATA_DIR/certs/nginx.key}
+SSL_DHPARAM_PATH=${SSL_DHPARAM_PATH:-$NGINX_DATA_DIR/certs/dhparam.pem}
+SSL_VERIFY_CLIENT=${SSL_VERIFY_CLIENT:-off}
+
+CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-$NGINX_DATA_DIR/certs/ca.crt}
+
+NGINX_MAX_UPLOAD_SIZE=${NGINX_MAX_UPLOAD_SIZE:-20m}
+
+case "${NGINX_HTTPS}" in
+    true)
+        if [ -f "${SSL_CERTIFICATE_PATH}" -a \
+             -f "${SSL_KEY_PATH}" -a \
+             -f "${SSL_DHPARAM_PATH}" ]; then
+            cd /etc/nginx/sites-enabled
+            ln -sb /etc/nginx/sites-available/default-ssl ./default
+        fi
+        ;;
+    *)
+        cd /etc/nginx/sites-enabled
+        ln -sb /etc/nginx/sites-available/default ./default
+        ;;
+esac
+
+LOCATION=""
+if [ -n "${GITLAB_TCP_ADDR}" ]; then
+    GITLAB_LOCATION="    location '${GITLAB_RELATIVE_URL_ROOT}' {\n\
+        proxy_pass ${GITLAB_PASS};\n"
+    case "${NGINX_HTTPS}" in
+        true)
+            GITLAB_LOCATION+="        proxy_redirect http:// https://;\n    }"
+            ;;
+        *)
+            GITLAB_LOCATION+="    }"
+            ;;
+    esac
+    LOCATION+="\n${GITLAB_LOCATION}"
+fi
+
+if [ -n "${REDMINE_TCP_ADDR}" ]; then
+    REDMINE_LOCATION="    location '${REDMINE_RELATIVE_URL_ROOT}' {\n\
+        proxy_pass ${REDMINE_PASS};\n"
+    case "${NGINX_HTTPS}" in
+        true)
+            REDMINE_LOCATION+="        proxy_redirect http:// https://;\n    }"
+            ;;
+        *)
+            REDMINE_LOCATION+="    }"
+            ;;
+    esac
+    LOCATION+="\n${REDMINE_LOCATION}"
+fi
+
+if [ -e /etc/nginx/sites-enabled/default ]; then
+    sed 's,{{SSL_CERTIFICATE_PATH}},'"${SSL_CERTIFICATE_PATH}"',' \
+        -i /etc/nginx/sites-enabled/default
+    sed 's,{{SSL_KEY_PATH}},'"${SSL_KEY_PATH}"',' \
+        -i /etc/nginx/sites-enabled/default
+    sed 's,{{SSL_DHPARAM_PATH}},'"${SSL_DHPARAM_PATH}"',' \
+        -i /etc/nginx/sites-enabled/default
+    sed 's,{{SSL_VERIFY_CLIENT}},'"${SSL_VERIFY_CLIENT}"',' \
+        -i /etc/nginx/sites-enabled/default
+    if [ -f /usr/local/share/ca-certificates/ca.crt ]; then
+        sed 's,{{CA_CERTIFICATES_PATH}},'"${CA_CERTIFICATES_PATH}"',' \
+            -i /etc/nginx/sites-enabled/default
+    else
+        sed '/{{CA_CERTIFICATES_PATH}}/d' -i /etc/nginx/sites-enabled/default
+    fi
+    sed 's,{{LOCATION}},'"${LOCATION}"',' \
+        -i /etc/nginx/sites-enabled/default
+fi
+
+appStart () {
+    service nginx start
+}
+
+appHelp () {
+    echo "Available options:"
+    echo " app:start          - Start redis server and watch the logs (default)"
+    echo " app:help           - Displays the help"
+    echo " [command]          - Execute the specified linux command eg. bash."
+}
+
+case "$1" in
+    app:start)
+        appStart
+        ;;
+    app:help)
+        appHelp
+        ;;
+    *)
+        if [ -x $1 ]; then
+            $1
+        else
+            prog=$(which $1)
+            if [ -n "${prog}" ] ; then
+                shift 1
+                $prog $@
+            else
+                appHelp
+            fi
+        fi
+        ;;
+esac
+
+exit 0
