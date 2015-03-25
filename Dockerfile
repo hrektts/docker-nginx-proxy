@@ -1,4 +1,4 @@
-FROM sameersbn/ubuntu:14.04.20141026
+FROM sameersbn/ubuntu:14.04.20150323
 MAINTAINER mps299792458@gmail.com
 
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv C300EE8C \
