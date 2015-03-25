@@ -1,5 +1,0 @@
-server {
-    location {{REDMINE_RELATIVE_URL_ROOT}} {
-	    proxy_pass {{REDMINE_PASS}};
-    }
-}

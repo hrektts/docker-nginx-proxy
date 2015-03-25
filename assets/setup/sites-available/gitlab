@@ -1,5 +1,0 @@
-server {
-    location {{GITLAB_RELATIVE_URL_ROOT}} {
-        proxy_pass {{GITLAB_PASS}};
-    }
-}
