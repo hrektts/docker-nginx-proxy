@@ -55,6 +55,12 @@ LOCATION=""
 if [ -n "${GITLAB_TCP_ADDR}" ]; then
     GITLAB_LOCATION="    location '${GITLAB_RELATIVE_URL_ROOT}' {\n\
         proxy_pass ${GITLAB_PASS};\n"
+    if [ -n "${NGINX_MAX_UPLOAD_SIZE}" ]; then
+        GITLAB_LOCATION+="        client_max_body_size ${NGINX_MAX_UPLOAD_SIZE};\n"
+    else
+        GITLAB_LOCATION+="        client_max_body_size 20m;\n"
+    fi
+
     case "${NGINX_HTTPS}" in
         true)
             GITLAB_LOCATION+="        proxy_redirect http:// https://;\n    }"
