@@ -9,12 +9,17 @@ GITLAB_PASS=${GITLAB_PASS:-}
 GITLAB_RELATIVE_URL_ROOT=${GITLAB_ENV_GITLAB_RELATIVE_URL_ROOT:-"/"}
 REDMINE_PASS=${REDMINE_PASS:-}
 REDMINE_RELATIVE_URL_ROOT=${REDMINE_ENV_REDMINE_RELATIVE_URL_ROOT:-"/"}
+EDITOR_PASS=${EDITOR_PASS:-}
+EDITOR_RELATIVE_URL_ROOT=${EDITOR_ENV_EDITOR_RELATIVE_URL_ROOT:-"/"}
 
 GITLAB_TCP_ADDR=${GITLAB_PORT_80_TCP_ADDR:-}
 GITLAB_TCP_PORT=${GITLAB_PORT_80_TCP_PORT:-}
 
 REDMINE_TCP_ADDR=${REDMINE_PORT_80_TCP_ADDR:-}
 REDMINE_TCP_PORT=${REDMINE_PORT_80_TCP_PORT:-}
+
+EDITOR_TCP_ADDR=${EDITOR_PORT_80_TCP_ADDR:-}
+EDITOR_TCP_PORT=${EDITOR_PORT_80_TCP_PORT:-}
 
 # is a gitlab container linked?
 if [ -n "${GITLAB_TCP_ADDR}" ]; then
@@ -24,6 +29,11 @@ fi
 # is a redmine container linked?
 if [ -n "${REDMINE_TCP_ADDR}" ]; then
     REDMINE_PASS="http://${REDMINE_TCP_ADDR}${REDMINE_TCP_PORT:+:$REDMINE_TCP_PORT}"
+fi
+
+# is a swagger-editor container linked?
+if [ -n "${EDITOR_TCP_ADDR}" ]; then
+    EDITOR_PASS="http://${EDITOR_TCP_ADDR}${EDITOR_TCP_PORT:+:$EDITOR_TCP_PORT}"
 fi
 
 SSL_SELF_SIGNED=${SSL_SELF_SIGNED:-false}
@@ -84,6 +94,20 @@ if [ -n "${REDMINE_TCP_ADDR}" ]; then
             ;;
     esac
     LOCATION+="\n${REDMINE_LOCATION}"
+fi
+
+if [ -n "${EDITOR_TCP_ADDR}" ]; then
+    EDITOR_LOCATION="    location '${EDITOR_RELATIVE_URL_ROOT}' {\n\
+        proxy_pass ${EDITOR_PASS};\n"
+    case "${NGINX_HTTPS}" in
+        true)
+            EDITOR_LOCATION+="        proxy_redirect http:// https://;\n    }"
+            ;;
+        *)
+            EDITOR_LOCATION+="    }"
+            ;;
+    esac
+    LOCATION+="\n${EDITOR_LOCATION}"
 fi
 
 if [ -e /etc/nginx/sites-enabled/default ]; then
