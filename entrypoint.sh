@@ -14,4 +14,6 @@ EOT
     fi
 fi
 
+NGINX_MAX_UPLOAD_SIZE=${NGINX_MAX_UPLOAD_SIZE:-20m}
+
 exec "$@"
