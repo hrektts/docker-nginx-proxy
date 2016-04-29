@@ -33,4 +33,4 @@ ENV DOCKER_HOST unix:///tmp/docker.sock
 EXPOSE 80 443
 VOLUME ["/etc/nginx/certs"]
 ENTRYPOINT ["/sbin/entrypoint.sh"]
-CMD ["cmd.sh"]
+CMD ["/sbin/cmd.sh"]
