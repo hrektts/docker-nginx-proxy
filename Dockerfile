@@ -1,7 +1,7 @@
-FROM hrektts/ubuntu:16.04.20160426
+FROM hrektts/ubuntu:16.04.20160525
 MAINTAINER mps299792458@gmail.com
 
-ENV NGINX_VERSION 1.10.0-0ubuntu0.16.04.1
+ENV NGINX_VERSION 1.10.0-0ubuntu0.16.04.2
 
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 \
     --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 \
@@ -14,7 +14,7 @@ RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 \
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
-ENV DOCKER_GEN_VERSION 0.7.0
+ENV DOCKER_GEN_VERSION 0.7.3
 
 RUN wget https://github.com/jwilder/docker-gen/releases/download/${DOCKER_GEN_VERSION}/docker-gen-linux-amd64-${DOCKER_GEN_VERSION}.tar.gz \
  && tar -C /usr/local/bin -xvzf docker-gen-linux-amd64-${DOCKER_GEN_VERSION}.tar.gz \
