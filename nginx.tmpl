@@ -1,15 +1,16 @@
 {{ define "location" }}
     {{ $proto := or (.Container.Env.VIRTUAL_PROTO) "http" }}
+    {{ $port := or (.Container.Env.VIRTUAL_PORT) "80" }}
     location {{ .Subdir }} {
     {{ if .Address }}
         {{/* If we got the containers from swarm and this container's port is published to host, use host IP:PORT */}}
         {{ if and .Container.Node.ID .Address.HostPort }}
         # {{ .Container.Node.Name }}/{{ .Container.Name }}
-        proxy_pass {{ $proto }}://{{ .Container.Node.Address.IP }}:{{ .Address.HostPort }};
+        proxy_pass {{ $proto }}://{{ .Container.Node.Address.IP }}:{{ $port }};
         {{/* If there is no swarm node or the port is not published on host, use container's IP:PORT */}}
         {{ else }}
         # {{ .Container.Name }}
-        proxy_pass {{ $proto }}://{{ .Address.IP }}:{{ .Address.Port }};
+        proxy_pass {{ $proto }}://{{ .Address.IP }}:{{ $port }};
         {{ end }}
     {{ else }}
         # {{ .Container.Name }}
