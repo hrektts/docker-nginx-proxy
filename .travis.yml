@@ -8,4 +8,4 @@ before_install:
   - docker build -t hrektts/nginx-proxy .
 
 script:
-  - docker run -it hrektts/nginx-proxy echo "Hello World"
+  - docker run -it -v /var/run/docker.sock:/tmp/docker.sock:ro hrektts/nginx-proxy echo "Hello World"
