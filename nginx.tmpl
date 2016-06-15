@@ -5,7 +5,7 @@
 
 {{ define "location" }}
     {{ $proto := coalesce (.Container.Env.VIRTUAL_PROTO) "http" }}
-    location /{{ .Subdir }} {
+    location {{ .Subdir }} {
     {{ if .Address }}
         {{/* If we got the containers from swarm and this container's port is published to host, use host IP:PORT */}}
         {{ if and .Container.Node.ID .Address.HostPort }}
@@ -21,8 +21,8 @@
         proxy_pass {{ $proto }}://{{ .Container.IP }};
     {{ end }}
 
-    {{ if .Container.Env.PROXY_MAX_UPLOAD_SIZE }}
-        client_max_body_size {{ .Container.Env.PROXY_MAX_UPLOAD_SIZE }}
+    {{ if .Container.Env.PROXY_MAX_OBJECT_SIZE }}
+        client_max_body_size {{ .Container.Env.PROXY_MAX_OBJECT_SIZE }}
     {{ end }}
 
     {{ if (and (exists .SslCrt) (exists .SslKey) ( eq $proto "http" )) }}
