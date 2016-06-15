@@ -22,7 +22,7 @@
     {{ end }}
 
     {{ if .Container.Env.PROXY_MAX_OBJECT_SIZE }}
-        client_max_body_size {{ .Container.Env.PROXY_MAX_OBJECT_SIZE }}
+        client_max_body_size {{ .Container.Env.PROXY_MAX_OBJECT_SIZE }};
     {{ end }}
 
     {{ if (and (exists .SslCrt) (exists .SslKey) ( eq $proto "http" )) }}
@@ -95,8 +95,8 @@ server {
     access_log /var/log/nginx/access.log backend;
     return 503;
 
-    ssl_certificate {{ $ssl_crt }}
-    ssl_certificate_key {{ $ssl_key }}
+    ssl_certificate {{ $ssl_crt }};
+    ssl_certificate_key {{ $ssl_key }};
 }
 
 server {
@@ -118,11 +118,11 @@ server {
     ssl_session_timeout 5m;
     ssl_session_cache shared:SSL:50m;
 
-    ssl_certificate {{ $ssl_crt }}
-    ssl_certificate_key {{ $ssl_key }}
+    ssl_certificate {{ $ssl_crt }};
+    ssl_certificate_key {{ $ssl_key }};
 
     {{ if (exists $ssl_dhparam) }}
-    ssl_dhparam {{ $ssl_dhparam }}
+    ssl_dhparam {{ $ssl_dhparam }};
     {{ end }}
 
     add_header Strict-Transport-Security "max-age=31536000";
