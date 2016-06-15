@@ -46,7 +46,7 @@ the SSL_KEY_PATH and SSL_CERTIFICATE_PATH configuration parameters.
 Configuration Parameters
 ------------------------
 
-Below is the complete list of available options that can be used.
+Below is the complete list of available options.
 
 ### For the proxy container
 
