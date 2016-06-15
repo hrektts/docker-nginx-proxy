@@ -54,7 +54,7 @@ Below is the complete list of available options.
   Location of the ssl certificate. Defaults to `/etc/nginx/certs/default.crt`.
 - SSL_KEY_PATH:
   Location of the ssl private key. Defaults to `/etc/nginx/certs/default.key`.
-- SSL_DHPARAM_PATH
+- SSL_DHPARAM_PATH:
   Location of the dhparam file. Defaults to `/etc/nginx/certs/default.dhparam.pem`.
 
 ### For the backend container
