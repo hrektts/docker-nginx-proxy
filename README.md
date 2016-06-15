@@ -50,6 +50,12 @@ Below is the complete list of available options.
 
 ### For the proxy container
 
+- NGINX_HSTS_ENABLED:
+  Option for turning off the HSTS configuration. Applicable only when SSL is in
+  use. Defaults to true.
+- NGINX_HSTS_MAXAGE:
+  Option for setting the HSTS max-age. Applicable only when SSL is in use.
+  Defaults to 31536000.
 - SSL_CERTIFICATE_PATH:
   Location of the ssl certificate. Defaults to `/etc/nginx/certs/default.crt`.
 - SSL_KEY_PATH:

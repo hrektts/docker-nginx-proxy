@@ -125,7 +125,10 @@ server {
     ssl_dhparam {{ $ssl_dhparam }};
     {{ end }}
 
-    add_header Strict-Transport-Security "max-age=31536000";
+    {{ if coalesce $current_container.Env.NGINX_HSTS_ENABLED true }}
+    {{ $age := coalesce $current_container.Env.NGINX_HSTS_MAXAGE "31536000" }}
+    add_header Strict-Transport-Security {{ $age }};
+    {{ end }}
 
     {{ range $subdir, $containers := groupBy $ "Env.PROXY_SUBDIR" }}
         {{ $container := first $containers }}
