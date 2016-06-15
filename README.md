@@ -67,3 +67,8 @@ Configuration Parameters
   container. Defaults to `http`.
 - VIRTUAL_PORT:
   The port to be proxied. Defaults to `80`.
+
+References
+----------
+
+- [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy)
