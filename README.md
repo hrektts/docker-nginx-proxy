@@ -4,7 +4,7 @@ docker-nginx-proxy
 [![Travis Build Status](https://travis-ci.org/hrektts/docker-nginx-proxy.svg?branch=master)](https://travis-ci.org/hrektts/docker-nginx-proxy)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Dockerfile to build a nginx container image that proxies requests with
+Dockerfile to build a nginx container image that proxies requests to
 subdirectories.
 
 Quick Start
@@ -41,10 +41,12 @@ The default path to look for the SSL certificates is /etc/nginx/certs.
 To enable HTTPS support, this directory must contain a private key and
 a certificate named /etc/nginx/certs/default.key and
 /etc/nginx/certs/default.crt respectively, these can however be changed using
-the SSL_KEY_PATH and SSL_CERTIFICATE_PATH configuration options.
+the SSL_KEY_PATH and SSL_CERTIFICATE_PATH configuration parameters.
 
 Configuration Parameters
 ------------------------
+
+Below is the complete list of available options that can be used.
 
 ### For the proxy container
 
