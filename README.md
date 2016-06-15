@@ -43,31 +43,27 @@ a certificate named /etc/nginx/certs/default.key and
 /etc/nginx/certs/default.crt respectively, these can however be changed using
 the SSL_KEY_PATH and SSL_CERTIFICATE_PATH configuration options.
 
-Available Configuration Parameters
-----------------------------------
+Configuration Parameters
+------------------------
+
+### For the proxy container
 
 - SSL_CERTIFICATE_PATH:
   Location of the ssl certificate. Defaults to `/etc/nginx/certs/default.crt`.
-
 - SSL_KEY_PATH:
   Location of the ssl private key. Defaults to `/etc/nginx/certs/default.key`.
-
 - SSL_DHPARAM_PATH
   Location of the dhparam file. Defaults to `/etc/nginx/certs/default.dhparam.pem`.
 
-Available Configuration Parameters for Backend Container
---------------------------------------------------------
+### For the backend container
 
 - PROXY_SUBDIR:
   The relative url of the backend service, e.g. /backend.
-
 - PROXY_MAX_OBJECT_SIZE:
   Maximum size of a object to be uploaded in byte. The default value of Nginx is
   used if no other value has been specified.
-
 - VIRTUAL_PROTO:
   The communication protocol between the proxy container and the backend
   container. Defaults to `http`.
-
 - VIRTUAL_PORT:
   The port to be proxied. Defaults to `80`.
