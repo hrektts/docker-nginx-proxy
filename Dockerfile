@@ -1,4 +1,4 @@
-FROM hrektts/ubuntu:16.04.20160525
+FROM hrektts/ubuntu:16.04.20160818
 MAINTAINER mps299792458@gmail.com
 
 ENV NGINX_VERSION 1.10.0-0ubuntu0.16.04.2
