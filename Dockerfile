@@ -1,11 +1,11 @@
 FROM hrektts/ubuntu:16.04.20160818
 MAINTAINER mps299792458@gmail.com
 
-ENV NGINX_VERSION 1.10.0-0ubuntu0.16.04.2
+ENV NGINX_VERSION 1.10.1-1~xenial
 
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 \
     --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 \
- && echo "deb http://nginx.org/packages/ubuntu xenial main" \
+ && echo "deb http://nginx.org/packages/ubuntu xenial nginx" \
     > /etc/apt/sources.list.d/nginx-stable-xenial.list \
  && apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx=${NGINX_VERSION} \
