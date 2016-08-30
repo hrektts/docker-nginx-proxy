@@ -3,9 +3,18 @@ sudo: required
 services:
   - docker
 
+env:
+  global:
+    - DOCKER_VERSION=1.12.1-0~trusty
+
 before_install:
+  - apt-cache madison docker-engine
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y --force-yes docker-engine=${DOCKER_VERSION}
+  - docker version
   - docker info
-  - docker build -t hrektts/nginx-proxy .
+  - sudo add-apt-repository ppa:duggan/bats --yes
+  - sudo apt-get update -y
+  - sudo apt-get install -y bats
 
 script:
-  - docker run -it -v /var/run/docker.sock:/tmp/docker.sock:ro hrektts/nginx-proxy echo "Hello World"
+  - make test
