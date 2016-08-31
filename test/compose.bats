@@ -13,6 +13,10 @@
     do
         sleep 1
     done
+
+    # Ensure the configuration of nginx being updated
+    # TODO: Fix not to depend on timer
+    sleep 1
 }
 
 @test "check response from site" {
