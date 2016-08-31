@@ -10,7 +10,14 @@ subdirectories.
 Quick Start
 -----------
 
-You can launch the container using the docker command line:
+The easiest way to launch the container is using [docker-compose](https://docs.docker.com/compose/):
+
+``` shell
+wget https://raw.githubusercontent.com/hrektts/docker-nginx-proxy/master/docker-compose.yml
+docker-compose up
+```
+
+Otherwise, you can launch the container using the docker command line:
 
 ``` shell
 docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro hrektts/nginx-proxy
