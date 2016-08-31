@@ -1,0 +1,16 @@
+version: '2'
+services:
+  nginx-proxy:
+    image: hrektts/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  backend:
+    image: backend-sub
+    ports:
+      - "8000:80"
+    environment:
+      - PROXY_SUBDIR=/sub
+      - VIRTUAL_PORT=80

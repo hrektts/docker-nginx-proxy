@@ -9,16 +9,16 @@
     {{ if .Address }}
         {{/* If we got the containers from swarm and this container's port is published to host, use host IP:PORT */}}
         {{ if and .Container.Node.ID .Address.HostPort }}
-        # {{ .Container.Node.Name }}/{{ .Container.Name }}
-        proxy_pass {{ $proto }}://{{ .Container.Node.Address.IP }}:{{ .Address.HostPort }};
+            # {{ .Container.Node.Name }}/{{ .Container.Name }}
+            proxy_pass {{ $proto }}://{{ .Container.Node.Address.IP }}:{{ .Address.HostPort }};
         {{/* If there is no swarm node or the port is not published on host, use container's IP:PORT */}}
-        {{ else }}
-        # {{ .Container.Name }}
-        proxy_pass {{ $proto }}://{{ .Address.IP }}:{{ .Address.Port }};
+        {{ else if .Network }}
+            # {{ .Container.Name }}
+            proxy_pass {{ $proto }}://{{ .Network.IP }}:{{ .Address.Port }};
         {{ end }}
-    {{ else }}
+    {{ else if .Network }}
         # {{ .Container.Name }}
-        proxy_pass {{ $proto }}://{{ .Container.IP }};
+        proxy_pass {{ $proto }}://{{ .Network.IP }};
     {{ end }}
 
     {{ if .Container.Env.PROXY_MAX_OBJECT_SIZE }}
@@ -147,9 +147,17 @@ server {
 
     {{ range $subdir, $containers := groupBy $ "Env.PROXY_SUBDIR" }}
         {{ $container := first $containers }}
-        {{ $port := coalesce $container.Env.VIRTUAL_PORT "80" }}
-        {{ $address := where $container.Addresses "Port" $port | first }}
-        {{ template "location" (dict "Subdir" $subdir "Container" $container "Address" $address "SslKey" $ssl_key "SslCrt" $ssl_crt) }}
+
+        {{ range $known_network := $current_container.Networks }}
+            {{ range $network := $container.Networks }}
+                {{ if eq $known_network.Name $network.Name }}
+    ## Can be connect with "{{ $network.Name }}" network
+                    {{ $port := coalesce $container.Env.VIRTUAL_PORT "80" }}
+                    {{ $address := where $container.Addresses "Port" $port | first }}
+                    {{ template "location" (dict "Subdir" $subdir "Container" $container "Address" $address "Network" $network "SslKey" $ssl_key "SslCrt" $ssl_crt) }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
     {{ end }}
 }
 
