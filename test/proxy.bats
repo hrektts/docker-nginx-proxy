@@ -11,26 +11,10 @@
         sleep 1
     done
 
-    run docker run --label bats-type="test" -p 8000:8000 \
+    run docker run --label bats-type="test" -p 8000:80 \
         -e PROXY_SUBDIR=/sub \
-        -e VIRTUAL_PORT=8000 \
-        --name backend \
-        -d python:3 tail -f /dev/null
-    [ "${status}" -eq 0 ]
-}
-
-@test "compose site" {
-    run docker exec -it backend mkdir -p /var/www/sub
-    [ "${status}" -eq 0 ]
-
-    run docker exec -it backend sh -c "echo 'hello' > /var/www/sub/index.html"
-    [ "${status}" -eq 0 ]
-
-    run docker exec -it backend sh -c \
-        "echo 'cd /var/www && python -m http.server 8000 &' > /var/www/run.sh"
-    [ "${status}" -eq 0 ]
-
-    run docker exec -it backend nohup sh /var/www/run.sh
+        -e VIRTUAL_PORT=80 \
+        -d backend-sub
     [ "${status}" -eq 0 ]
 
     until curl --head localhost:8000

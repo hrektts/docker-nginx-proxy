@@ -9,4 +9,5 @@ release: build
 .PHONY: test
 test:
 	@docker build -t hrektts/nginx-proxy:bats .
+	@make -C test/backend
 	bats test
