@@ -132,13 +132,20 @@ server {
 
     {{ range $subdir, $containers := groupBy $ "Env.PROXY_SUBDIR" }}
         {{ $container := first $containers }}
-        {{ $port := coalesce $container.Env.VIRTUAL_PORT "80" }}
-        {{ $address := where $container.Addresses "Port" $port | first }}
-        {{ template "location" (dict "Subdir" $subdir "Container" $container "Address" $address "SslKey" $ssl_key "SslCrt" $ssl_crt) }}
+
+        {{ range $known_network := $current_container.Networks }}
+            {{ range $network := $container.Networks }}
+                {{ if eq $known_network.Name $network.Name }}
+    ## Can be connect with "{{ $network.Name }}" network
+                    {{ $port := coalesce $container.Env.VIRTUAL_PORT "80" }}
+                    {{ $address := where $container.Addresses "Port" $port | first }}
+                    {{ template "location" (dict "Subdir" $subdir "Container" $container "Address" $address "Network" $network "SslKey" $ssl_key "SslCrt" $ssl_crt) }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
     {{ end }}
-
-
 }
+
 {{ else }}
 
 server {
