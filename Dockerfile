@@ -1,7 +1,7 @@
 FROM hrektts/ubuntu:16.04.20161010
 MAINTAINER mps299792458@gmail.com
 
-ENV NGINX_VERSION 1.10.1-1~xenial
+ENV NGINX_VERSION 1.10.2-1~xenial
 
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 \
     --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 \
